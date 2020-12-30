@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Note from './Note';
 import axios from 'axios';
@@ -13,31 +14,35 @@ const Notes = (props) => {
 	]);
 
 	useEffect(() => {
-		getNotes();
-	}, []);
+		const getNotes = () => {
+			const config = {
+				headers: { Authorization: `Bearer ${props.user.token}` }
+			};
 
-	const getNotes = () => {
-		axios
-			.get('/note/')
-			.then((response) => {
-				const formattedNotes = response.data.map((note) => {
-					const now = new Date();
-					const then = new Date(Date.parse(note.timestamp));
-					note.timestamp = formatTime(now - then);
+			axios
+				.get('/note/', config)
+				.then((response) => {
+					const formattedNotes = response.data.map((note) => {
+						const now = new Date();
+						const then = new Date(Date.parse(note.timestamp));
+						note.timestamp = formatTime(now - then);
 
-					return note;
+						return note;
+					});
+
+					setNotes(formattedNotes);
+				})
+				.catch((error) => {
+					setNotes([
+						{
+							id: -1
+						}
+					]);
 				});
+		};
 
-				setNotes(formattedNotes);
-			})
-			.catch((error) =>
-				setNotes([
-					{
-						id: -1
-					}
-				])
-			);
-	};
+		getNotes();
+	}, [props.user.token]);
 
 	let toRender;
 
@@ -65,8 +70,12 @@ const Notes = (props) => {
 	}
 
 	const handleNoteDelete = (id, idx) => {
+		const config = {
+			headers: { Authorization: `Bearer ${props.user.token}` }
+		};
+
 		axios
-			.delete(`/note-delete/${id}/`)
+			.delete(`/note-delete/${id}/`, config)
 			.then((response) => {
 				const newNotes = [...notes];
 				newNotes.splice(idx, 1);
@@ -87,4 +96,10 @@ const Notes = (props) => {
 	);
 };
 
-export default Notes;
+const mapStateToProps = (state) => {
+	return {
+		user: state.auth.user
+	};
+};
+
+export default connect(mapStateToProps)(Notes);
