@@ -24,7 +24,6 @@ const Login = (props) => {
 			...state,
 			[event.target.name]: value
 		});
-		console.log(state);
 	};
 
 	const handleLogin = (event) => {
