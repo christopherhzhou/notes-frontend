@@ -13,7 +13,7 @@ import './App.css';
 const App = (props) => {
 	let toRender;
 
-	axios.defaults.baseURL = 'http://0.0.0.0:5000';
+	axios.defaults.baseURL = 'https://authed-notes-backend.herokuapp.com';
 
 	if (!props.prechecksRan) {
 		toRender = <Prechecks />;
