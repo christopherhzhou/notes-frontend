@@ -7,9 +7,7 @@ const Prechecks = (props) => {
 	useEffect(() => {
 		runPrechecks()
 			.then((res) => {
-				if (res) {
-					props.dispatch(addUser(res));
-				}
+				if (res) props.dispatch(addUser(res));
 			})
 			.finally(() => {
 				props.dispatch(prechecksRan());

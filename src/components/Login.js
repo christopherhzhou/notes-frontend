@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import { Link, Redirect } from 'react-router-dom';
 import { addUser } from '../redux/actions/authActions';
 
 const Login = (props) => {
@@ -9,27 +10,28 @@ const Login = (props) => {
 		password: ''
 	});
 
+	if (props.user) {
+		return <Redirect to='/' />;
+	}
+
 	const fieldStyles = {
 		padding: '5px'
 	};
 
-	const handleUsernameChange = (event) => {
-		const newState = { ...state };
-		newState.username = event.target.value;
-		setState(newState);
-	};
-
-	const handlePasswordChange = (event) => {
-		const newState = { ...state };
-		newState.password = event.target.value;
-		setState(newState);
+	const handleFieldChange = (event) => {
+		const value = event.target.value;
+		setState({
+			...state,
+			[event.target.name]: value
+		});
+		console.log(state);
 	};
 
 	const handleLogin = (event) => {
 		event.preventDefault();
 		const payload = {
-			username: event.target.username.value,
-			password: event.target.password.value
+			username: state.username,
+			password: state.password
 		};
 		axios
 			.post('/auth/token/', payload)
@@ -47,27 +49,33 @@ const Login = (props) => {
 
 	return (
 		<div>
+			<h3>Welcome back!</h3>
 			<form onSubmit={handleLogin}>
 				<div style={fieldStyles}>
 					<label>Username: </label>
 					<input
 						type='text'
+						name='username'
 						id='username'
 						value={state.username}
-						onChange={handleUsernameChange}
+						onChange={handleFieldChange}
 					/>
 				</div>
 				<div style={fieldStyles}>
 					<label>Password: </label>
 					<input
 						type='password'
+						name='password'
 						id='password'
 						value={state.password}
-						onChange={handlePasswordChange}
+						onChange={handleFieldChange}
 					/>
 				</div>
 				<input style={{ margin: '8px' }} type='submit' value='Login' />
 			</form>
+			<p>
+				Don't have an account? <Link to='/signup'>Register here</Link>
+			</p>
 		</div>
 	);
 };

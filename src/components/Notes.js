@@ -14,35 +14,40 @@ const Notes = (props) => {
 	]);
 
 	useEffect(() => {
-		const getNotes = () => {
-			const config = {
-				headers: { Authorization: `Bearer ${props.user.token}` }
+		if (props.user) {
+			const getNotes = () => {
+				const config = {
+					headers: { Authorization: `Bearer ${props.user.token}` }
+				};
+
+				axios
+					.get('/note/', config)
+					.then((response) => {
+						const formattedNotes = response.data.map((note) => {
+							const now = new Date();
+							const then = new Date(Date.parse(note.timestamp));
+							note.timestamp = formatTime(now - then);
+
+							return note;
+						});
+
+						setNotes(formattedNotes);
+					})
+					.catch((error) => {
+						setNotes([
+							{
+								id: -1
+							}
+						]);
+					});
 			};
 
-			axios
-				.get('/note/', config)
-				.then((response) => {
-					const formattedNotes = response.data.map((note) => {
-						const now = new Date();
-						const then = new Date(Date.parse(note.timestamp));
-						note.timestamp = formatTime(now - then);
+			getNotes();
+		}
+	}, [props.user]);
 
-						return note;
-					});
-
-					setNotes(formattedNotes);
-				})
-				.catch((error) => {
-					setNotes([
-						{
-							id: -1
-						}
-					]);
-				});
-		};
-
-		getNotes();
-	}, [props.user.token]);
+	// if there is no user, return this
+	if (!props.user) return <p>Please sign in to view your notes.</p>;
 
 	let toRender;
 

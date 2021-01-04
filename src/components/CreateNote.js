@@ -6,6 +6,8 @@ import axios from 'axios';
 const CreateNote = (props) => {
 	const [note, setNote] = useState('');
 
+	if (!props.user) return <p>Please sign in to create a note.</p>;
+
 	const handleCreateNote = (event) => {
 		event.preventDefault();
 

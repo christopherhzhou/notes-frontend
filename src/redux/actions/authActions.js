@@ -11,3 +11,11 @@ export function removeUser() {
 export function prechecksRan() {
 	return { type: actionTypes.PRECHECKS_RAN };
 }
+
+export function showHeader() {
+	return { type: actionTypes.SHOW_HEADER };
+}
+
+export function hideHeader() {
+	return { type: actionTypes.HIDE_HEADER };
+}
